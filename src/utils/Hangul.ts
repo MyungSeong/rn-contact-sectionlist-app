@@ -17,7 +17,7 @@ export const getConstantVowel = (kor: string) => {
                 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
 
     /*
-     * Hangeul Unicode
+     * Hangul Unicode
      * UTF-16 [AC00 ~ D7AF]
      * Basecode [(16 ^ 3) * 10 + (16 ^ 2) * 12 + 16 * 0 + 0 = 44032]
      */
@@ -39,7 +39,7 @@ export const getConstantVowel = (kor: string) => {
         TODO: 유니코드 범위 체크
      * regex /[\u3131-\u314e|\u314f-\u3163|\uac00-\ud7a3]/g
      */
-    /* const hangeulUnicodeRangeRegex =
+    /* const hangulUnicodeRangeRegex =
         /[\u3131-\u314e|\u314f-\u3163|\uac00-\ud7a3]/g; */
 
     if (!kor && !checkIsKorean(kor)) {
@@ -95,3 +95,8 @@ export const checkIsKorean = (kor: string) => {
 
     return isKorean;
 };
+/* 
+export default { getConstantVowel, checkPrepositionalParticle, checkIsKorean };
+
+export { default as HangulUtils } from '@/utils/Hangul';
+ */

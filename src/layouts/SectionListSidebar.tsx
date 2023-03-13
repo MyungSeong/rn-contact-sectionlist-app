@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import SectionListSidebar from '@/components/SectionListSidebar';
-import { HangeulUtils, Storage } from '@/utils';
+import { HangulUtils, Storage, RegEx, i18n } from '@/utils';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -36,40 +36,36 @@ const SectionListSidebarLayout = () => {
     const [isShow, setIsShow] = useState<boolean>(false);
     const [indicatorText, setIndicatorText] = useState<string>('');
 
+    let language = '';
+
     useEffect(() => {
+        /*
+         * TODO: react-i18next
+         */
+        language = 'ko';
+
         const names = [
+            '김명성',
             '김현민',
-            '님현민',
-            '남명성',
+            '나명성',
             '다명성',
             '라현민',
-            '강현민',
-            '김명성',
-            '이명성',
-            '김현민',
-            '강현민',
-            '김명성',
-            '이명성',
-            '이명성',
-            '김현민',
-            '강현민',
-            '김명성',
-            '이명성',
-            '이명성',
-            '김현민',
-            '강현민',
-            '김명성',
-            '이명성',
-            '이명성',
-            '김현민',
-            '강현민',
-            '김명성',
-            '이명성',
-            '김현민',
-            '강현민',
-            '김명성',
-            'Adam',
-            'Grace',
+            '마현민',
+            '바명성',
+            '사명성',
+            '아현민',
+            '자현민',
+            '차명성',
+            '카명성',
+            '타명성',
+            '파현민',
+            '하현민',
+            'Angular',
+            // 'Alpine.js' // Regex 특문 처리
+            'Ember',
+            'Preact',
+            'Zulu',
+            '名前',
         ];
 
         setData(createContactDataset(names));
@@ -86,17 +82,40 @@ const SectionListSidebarLayout = () => {
 
         const uniqueFirstConsonants = [
             ...new Set(
-                names.map(
-                    name =>
-                        HangeulUtils.getConstantVowel(name)?.firstConsonant!,
-                ),
+                names.map(name => {
+                    if (!name) {
+                        return;
+                    }
+
+                    switch (language) {
+                        case 'ko':
+                            if (RegEx.isKorean(name)) {
+                                return HangulUtils.getConstantVowel(name)
+                                    ?.firstConsonant!;
+                            } else if (RegEx.isEnglish(name)) {
+                                return name[0].toUpperCase();
+                            } else {
+                                return '#';
+                            }
+
+                        case 'en':
+                            if (RegEx.isEnglish(name)) {
+                                return name[0].toUpperCase();
+                            } else {
+                                return '#';
+                            }
+
+                        default:
+                            break;
+                    }
+                }),
             ),
         ];
 
         uniqueFirstConsonants.forEach(firstConsonants => {
             const obj = {
-                key: firstConsonants,
-                title: firstConsonants,
+                key: firstConsonants!,
+                title: firstConsonants!,
                 data: [],
             };
 
@@ -104,8 +123,32 @@ const SectionListSidebarLayout = () => {
         });
 
         names.forEach(name => {
-            const currentFirstConsonant: string =
-                HangeulUtils.getConstantVowel(name)?.firstConsonant!;
+            let currentFirstConsonant: string = '';
+
+            switch (language) {
+                case 'ko':
+                    if (RegEx.isKorean(name)) {
+                        currentFirstConsonant =
+                            HangulUtils.getConstantVowel(name)?.firstConsonant!;
+                    } else if (RegEx.isEnglish(name)) {
+                        currentFirstConsonant = name[0].toUpperCase();
+                    } else {
+                        currentFirstConsonant = '#';
+                    }
+
+                    break;
+
+                case 'en':
+                    if (RegEx.isEnglish(name)) {
+                        currentFirstConsonant = name[0].toUpperCase();
+                    } else {
+                        currentFirstConsonant = '#';
+                    }
+                    break;
+
+                default:
+                    break;
+            }
 
             for (const index in sectionInfoList) {
                 if (sectionInfoList[index].key === currentFirstConsonant) {

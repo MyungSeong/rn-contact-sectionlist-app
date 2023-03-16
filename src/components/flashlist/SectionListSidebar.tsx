@@ -27,6 +27,7 @@ import {
     ViewStyle,
 } from 'react-native';
 import SectionListGetItemLayout from 'react-native-section-list-get-item-layout';
+import { FlashList } from '@shopify/flash-list';
 
 import TextIndicator from '@components/TextIndicator';
 
@@ -272,12 +273,59 @@ const SectionListSidebar = (
         ],
     );
 
+    const contacts = data.reduce((contactsMap, contact) => {
+        const lastNameInitial = contact.key;
+        const currentLetterContacts = contactsMap.get(lastNameInitial) ?? [];
+        contactsMap.set(lastNameInitial, [...currentLetterContacts, contact]);
+        return contactsMap;
+    }, new Map<string, any[]>());
+    
+    contacts.forEach(
+        (_contacts: any[], key: string, map: Map<string, any[]>) => {
+            const sortedContacts = _contacts.sort((aContact, bContact) =>
+                aContact.lastName.localeCompare(bContact.lastName),
+            );
+            map.set(key, sortedContacts);
+        },
+    );
+
+    const contactsWithTitles = Array.from(contacts.keys())
+        .sort((aKey, bKey) => aKey.localeCompare(bKey))
+        .flatMap(key => {
+            return [key, ...(contacts.get(key) ?? [])];
+        });
+
     return (
         <View style={[styles.container, containerStyle]} onLayout={onLayout}>
             <TextIndicator isShow={isShow} text={indicatorText} />
             <View
-                style={{ flexDirection: rtl === true ? 'row-reverse' : 'row' }}>
-                <SectionList
+                style={{
+                    flexDirection: rtl === true ? 'row-reverse' : 'row',
+                    width: '100%',
+                    height: '100%',
+                }}>
+                <FlashList
+                    data={contactsWithTitles}
+                    renderItem={({ item }) => {
+                        console.log(item);
+
+                        return (
+                            <View>
+                                <Text
+                                    style={{
+                                        color: 'black',
+                                    }}>
+                                    {item.data}
+                                </Text>
+                            </View>
+                        );
+                    }}
+                    getItemType={item =>
+                        typeof item === 'string' ? 'sectionHeader' : 'row'
+                    }
+                    estimatedItemSize={100}
+                />
+                {/* <SectionList
                     keyExtractor={sectionKeyExtract}
                     getItemLayout={getItemLayout}
                     onScroll={() => {
@@ -290,7 +338,7 @@ const SectionListSidebar = (
                     ref={ref}
                     sections={data}
                     {...props}
-                />
+                /> */}
                 <Animated.View
                     ref={sidebarRef}
                     style={[

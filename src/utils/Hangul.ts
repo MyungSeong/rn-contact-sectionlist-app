@@ -100,3 +100,74 @@ export default { getConstantVowel, checkPrepositionalParticle, checkIsKorean };
 
 export { default as HangulUtils } from '@/utils/Hangul';
  */
+
+export const sortHangulFirst = (input: string[]) => {
+    /* const patternAlphabet = /[a-zA-Z]/;
+    const isAlphabet = (str: string) => patternAlphabet.test(str.charAt(0)); */
+
+    const patternNumber = /[0-9]/;
+    const patternAlphabet = /[a-zA-Z]/;
+    const patternHangul = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+    const orderLevelDesc = [patternNumber, patternAlphabet, patternHangul];
+    // 배열의 역순으로 정렬이 된다.
+
+    const getLevel = (str: string) => {
+        const index = orderLevelDesc.findIndex(pattern => pattern.test(str));
+
+        return index;
+    };
+
+    const sortGroupString = (source: string[]) => {
+        // console.log('[removeDulicate] source', source)
+
+        source.sort((a, b) => {
+            const aLevel = getLevel(a.charAt(0));
+            const bLevel = getLevel(b.charAt(0));
+
+            if (aLevel === bLevel) {
+                return a.charCodeAt(0) - b.charCodeAt(0);
+            }
+
+            return bLevel - aLevel; // 오름 차순 정렬
+        });
+
+        // console.log('[sortGroupString] result', source)
+    };
+
+    sortGroupString(input);
+
+    // ['ㄱ', 'ㄴ', 'ㄷ', 'ㅋ', 'ㅎ', 'ㅠ', 'Z', 'a', 'b', 's', 'z', '1']
+};
+
+export const compareHangulFirst = (a, b) => {
+    const addOrderPrefix = (str: string) => {
+        const unicode = str.toLowerCase().charCodeAt(0);
+        let prefix = '';
+
+        // 한글 AC00 ~ D7AF
+        if (unicode >= 0xac00 && unicode <= 0xd7af) prefix = '1';
+        // 한글 자모 3130 ~ 318F
+        else if (unicode >= 0x3130 && unicode <= 0x318f) prefix = '2';
+        // 영어 소문자 0061 ~ 007A
+        else if (unicode >= 0x61 && unicode <= 0x7a) prefix = '3';
+        // 그 외
+        else prefix = '9';
+
+        return prefix + str;
+    };
+
+    a = addOrderPrefix(a);
+    b = addOrderPrefix(b);
+
+    if (a < b) {
+        return -1;
+    }
+
+    if (a > b) {
+        return 1;
+    }
+
+    return 0;
+
+    // console.log(['1', '김', 'A'].sort(compareHangulFirst));
+};

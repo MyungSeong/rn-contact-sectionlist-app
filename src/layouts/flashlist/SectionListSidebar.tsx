@@ -9,7 +9,7 @@ import {
     View,
 } from 'react-native';
 
-import SectionListSidebar from '@components/SectionListSidebar';
+import SectionListSidebar from '@components/flashlist/SectionListSidebar';
 import { HangulUtils, Storage, RegEx, i18n } from '@utils/index';
 
 const windowHeight = Dimensions.get('window').height;

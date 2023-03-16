@@ -26,8 +26,10 @@ import Animated, {
 // lottie
 import Lottie from 'lottie-react-native';
 
-import ContactSectionList from '@/components/ContactSectionList';
-import SectionListSidebarLayout from '@/layouts/SectionListSidebar';
+import ContactSectionList from '@components/ContactSectionList';
+
+import SectionListSidebar from '@layouts/SectionListSidebar';
+import FlashListSidebar from '@layouts/flashlist/SectionListSidebar';
 
 // ------------------------------------------------------------------
 
@@ -56,7 +58,7 @@ const App = () => {
                                 />
                             ),
                         }}
-                        component={SectionListSidebarLayout}
+                        component={FlashListSidebar}
                     />
                     <Tab.Screen
                         name="Upload"
@@ -71,7 +73,7 @@ const App = () => {
                                 />
                             ),
                         }}
-                        component={ContactSectionList}
+                        component={SectionListSidebar}
                     />
                     <Tab.Screen
                         name="Chat"
@@ -86,7 +88,7 @@ const App = () => {
                                 />
                             ),
                         }}
-                        component={PlaceholderScreen}
+                        component={ContactSectionList}
                     />
                     <Tab.Screen
                         name="Settings"
